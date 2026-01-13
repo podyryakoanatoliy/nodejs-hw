@@ -3,9 +3,9 @@ import createHttpError from 'http-errors';
 
 export const getAllNotes = async (req, res) => {
   const notes = await Note.find();
-  if (notes.length === 0) {
-    throw createHttpError(404, 'Notes not found or empty');
-  }
+  // if (notes.length === 0) {
+  //   throw createHttpError(404, 'Notes not found or empty');
+  // }
   res.status(200).json(notes);
 };
 
