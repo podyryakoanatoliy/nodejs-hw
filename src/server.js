@@ -8,7 +8,9 @@ import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { logger } from './middleware/logger.js';
 import notesRoutes from './routes/notesRoutes.js';
+import authRoutes from "./routes/authRoutes.js"
 import { errors } from 'celebrate';
+import cookieParser from 'cookie-parser';
 const PORT = process.env.PORT ?? 3000;
 
 const app = express();
@@ -16,16 +18,17 @@ app.use(logger);
 app.use(express.json());
 app.use(cors());
 app.use(helmet());
+app.use(cookieParser());
 
-app.use((req, res, next) => {
-  console.log(`Time: ${new Date().toLocaleString()}`);
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log(`Time: ${new Date().toLocaleString()}`);
+//   next();
+// });
 // Перший маршрут
 app.get('/', (req, res) => {
   res.status(200).json({ message: `Time: ${new Date().toLocaleString()}` });
 });
-
+app.use(authRoutes);
 app.use(notesRoutes); // <--- Основні маршрути (GET, POST, PATCH, DELETE)
 
 app.use(notFoundHandler);
