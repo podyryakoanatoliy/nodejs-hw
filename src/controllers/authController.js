@@ -4,7 +4,7 @@ import bcrypt from "bcrypt"
 import { Session } from "../models/session.js";
 import { createSession, setSessionCookies } from "../services/auth.js";
 import  jwt from 'jsonwebtoken'
-import { sendEmail } from "../utils/sendEmail.js";
+import { sendEmail } from "../utils/sendMail.js";
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import handlebars from 'handlebars';
