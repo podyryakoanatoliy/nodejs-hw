@@ -4,7 +4,7 @@ import bcrypt from "bcrypt"
 import { Session } from "../models/session.js";
 import { createSession, setSessionCookies } from "../services/auth.js";
 import  jwt from 'jsonwebtoken'
-import { sendMail } from "../utils/sendMail.js";
+import { sendEmail } from "../utils/sendEmail.js";
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import handlebars from 'handlebars';
@@ -85,7 +85,7 @@ export const requestResetEmail = async (req, res)=>{
     const user = await User.findOne({email});
     console.log(user)
     if(!user){
-        res.status(200).json({ message: 'Password reset email sent successfully' });
+       return res.status(200).json({ message: 'Password reset email sent successfully' });
     }
     
     const resetToken = jwt.sign(
@@ -102,7 +102,7 @@ export const requestResetEmail = async (req, res)=>{
         link: `${process.env.FRONTEND_DOMAIN}/reset-password?token=${resetToken}`
     });
     try {
-       await sendMail({
+       await sendEmail({
         from: process.env.SMTP_FROM,
         to: email,
         subject: 'Reset your password',
@@ -121,7 +121,7 @@ export const resetPassword = async (req, res)=>{
     try {
         payload = jwt.verify(token, process.env.JWT_SECRET);
     } catch {
-        createHttpError(401, 'Invalid or expired token');
+       throw createHttpError(401, 'Invalid or expired token');
     }
     const user = await User.findOne({_id: payload.sub, email:payload.email})
     if (!user) {
@@ -129,7 +129,7 @@ export const resetPassword = async (req, res)=>{
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     await User.updateOne(
-        {_id: user._id},
+        {_id: user._id},    
         {password: hashedPassword}
     )
       await Session.deleteMany({ userId: user._id });
